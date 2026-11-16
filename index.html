@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sborra Pazza</title>
+<style>
+body {
+  margin: 0;
+  background: #090014;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  overflow: hidden;
+}
+h1 {
+  color: #ff4dff;
+  text-shadow: 0 0 20px #ff00ff;
+  margin-top: 25px;
+}
+#screen {
+  width: 100%;
+  height: 70vh;
+  display: block;
+}
+button {
+  padding: 15px 30px;
+  background: #ff00d4;
+  color: white;
+  border: 0;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+}
+#stats {
+  color: #00ffff;
+  margin: 15px;
+}
+</style>
+</head>
+<body>
+
+<h1>💦 SBORRA PAZZA 💦</h1>
+<div id="stats">500.000 PARTICELLE / SECONDO</div>
+
+<canvas id="screen"></canvas>
+
+<button onclick="toggle()">AVVIA IL CAOS</button>
+
+<script>
+const canvas = document.getElementById("screen");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+let running = false;
+let total = 0;
+
+function resize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight * 0.7;
+}
+resize();
+window.addEventListener("resize", resize);
+
+function spawn() {
+  if (!running) return;
+
+  // Simulazione visiva ottimizzata
+  for (let i = 0; i < 150; i++) {
+    particles.push({
+      x: canvas.width / 2,
+      y: canvas.height - 30,
+      vx: (Math.random() - 0.5) * 18,
+      vy: -Math.random() * 20 - 5,
+      life: 100,
+      size: Math.random() * 4 + 1
+    });
+  }
+  total += 500000;
+}
+
+function animate() {
+  ctx.fillStyle = "rgba(9,0,20,0.2)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Reattore centrale
+  ctx.fillStyle = "#ff00dd";
+  ctx.shadowBlur = 30;
+  ctx.shadowColor = "#ff00ff";
+  ctx.beginPath();
+  ctx.arc(canvas.width/2, canvas.height-20, 20, 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  for (let p of particles) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.15;
+    p.life--;
+
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  particles = particles.filter(p => p.life > 0);
+  requestAnimationFrame(animate);
+}
+
+function toggle() {
+  running = !running;
+  if (running) {
+    setInterval(spawn, 100);
+  }
+}
+
+animate();
+</script>
+</body>
+</html>
